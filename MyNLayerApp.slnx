@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/" />
+  <Folder Name="/src/">
+    <Project Path="MyNLayerApp.Business/MyNLayerApp.Business.csproj" />
+    <Project Path="MyNLayerApp.DataAccess/MyNLayerApp.DataAccess.csproj" />
+    <Project Path="MyNLayerApp.Entity/MyNLayerApp.Entity.csproj" />
+    <Project Path="MyNLayerApp.Presentation/MyNLayerApp.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+</Solution>
