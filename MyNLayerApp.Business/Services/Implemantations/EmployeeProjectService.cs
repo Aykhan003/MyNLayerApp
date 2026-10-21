@@ -1,10 +1,11 @@
 ﻿using MyNLayerApp.DataAccess.Contexts;
 using MyNLayerApp.Entity.Entities;
 using Microsoft.EntityFrameworkCore;
+using MyNLayerApp.Business.Services.Interfaces;
 
-namespace MyNLayerApp.Business.Services;
+namespace MyNLayerApp.Business.Services.Implemantations;
 
-public class EmployeeProjectService
+public class EmployeeProjectService : IEmployeeProjectService
 {
     private readonly MyNLayerAppDbContext _context;
     public EmployeeProjectService(MyNLayerAppDbContext context)

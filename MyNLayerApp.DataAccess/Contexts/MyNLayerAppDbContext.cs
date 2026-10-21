@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyNLayerApp.Entity.Entities;
+using MyNLayerApp.Entity.Entities.Common;
 
 namespace MyNLayerApp.DataAccess.Contexts;
 
@@ -14,6 +15,23 @@ public class MyNLayerAppDbContext : DbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(MyNLayerAppDbContext).Assembly);
         base.OnModelCreating(modelBuilder);
+    }
+    public override int SaveChanges()
+    {
+        var datas = ChangeTracker.Entries<AuditEntity>().ToList();
+        foreach (var data in datas)
+        {
+            switch (data.State)
+            {
+                case EntityState.Added:
+                    data.Entity.CreatedDate = DateTime.Now;
+                    break;
+                case EntityState.Modified:
+                    data.Entity.UpdatedDate = DateTime.Now;
+                    break;
+            }
+        }
+        return base.SaveChanges();
     }
     public DbSet<Department> Departments { get; set; }
     public DbSet<Employee> Employees { get; set; }

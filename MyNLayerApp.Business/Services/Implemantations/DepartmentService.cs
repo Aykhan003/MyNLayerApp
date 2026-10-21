@@ -1,22 +1,34 @@
 ﻿using MyNLayerApp.DataAccess.Contexts;
 using MyNLayerApp.Entity.Entities;
 using Microsoft.EntityFrameworkCore;
+using MyNLayerApp.Business.Services.Interfaces;
+using MyNLayerApp.Business.Dtos.DepartmentDtos;
 
-namespace MyNLayerApp.Business.Services;
+namespace MyNLayerApp.Business.Services.Implemantations;
 
-public class DepartmentService
+public class DepartmentService : IDepartmentService
 {
     private readonly MyNLayerAppDbContext _context;
     public DepartmentService(MyNLayerAppDbContext context)
     {
         _context = context;
     }
-    public async Task<List<Department>> GetAllDepartmentsAsync()
+    public async Task<List<DepartmentReturnDto>> GetAllDepartmentsAsync()
     {
         return await _context.Departments.AsNoTracking()
+            .Select(d => new DepartmentReturnDto
+            {
+                Id = d.Id,
+                Name = d.Name,
+                Description = d.Description,
+                Location = d.Location,
+                Limit = d.Limit,
+                CreatedDate = d.CreatedDate,
+                UpdatedDate = d.UpdatedDate
+            })
             .ToListAsync();
     }
-    public async Task<Department?> GetDepartmentByIdAsync(int id)
+    public async Task<DepartmentReturnDto?> GetDepartmentByIdAsync(int id)
     {
         if (id <= 0)
         {
@@ -28,10 +40,40 @@ public class DepartmentService
         {
             throw new KeyNotFoundException($"Department with ID {id} not found.");
         }
-        return await _context.Departments.FindAsync(id);
+        var departmentReturnDto = new DepartmentReturnDto
+        {
+            Id = department.Id,
+            Name = department.Name,
+            Description = department.Description,
+            Location = department.Location,
+            Limit = department.Limit,
+            CreatedDate = department.CreatedDate,
+            UpdatedDate = department.UpdatedDate,
+            Employees = await _context.Employees
+                .Where(e => e.DepartmentId == department.Id)
+                .Select(e => new EmployeeInDepartmentReturnDto
+                {
+                    Name = e.Name,
+                    
+                })
+                .ToListAsync()
+        };
+        return departmentReturnDto;
+
     }
-    public async Task<Department> CreateDepartmentAsync(Department department)
+    public async Task<Department> CreateDepartmentAsync(DepartmentCreateDto departmentCreateDto)
     {
+        if (departmentCreateDto == null)
+        {
+            throw new ArgumentNullException(nameof(departmentCreateDto), "Department create DTO cannot be null.");
+        }
+        var department = new Department
+        {
+            Name = departmentCreateDto.Name,
+            Description = departmentCreateDto.Description,
+            Location = departmentCreateDto.Location,
+            Limit = departmentCreateDto.Limit
+        };
         if (department == null)
         {
             throw new ArgumentNullException(nameof(department), "Department cannot be null.");
@@ -52,7 +94,7 @@ public class DepartmentService
         {
             throw new ArgumentNullException(nameof(department), "Department cannot be null.");
         }
-        var existingDepartment = await _context.Departments.AsNoTracking()
+        var existingDepartment = await _context.Departments
             .FirstOrDefaultAsync(d => d.Id == department.Id);
         if (existingDepartment == null)
         {

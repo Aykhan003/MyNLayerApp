@@ -1,15 +1,19 @@
 ﻿using MyNLayerApp.DataAccess.Contexts;
 using MyNLayerApp.Entity.Entities;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using MyNLayerApp.Business.Services.Interfaces;
 
-namespace MyNLayerApp.Business.Services;
+namespace MyNLayerApp.Business.Services.Implemantations;
 
-public class EmployeeService
+public class EmployeeService : IEmployeeService
 {
     private readonly MyNLayerAppDbContext _context;
-    public EmployeeService(MyNLayerAppDbContext context)
+    private readonly IMapper _mapper;
+    public EmployeeService(MyNLayerAppDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
     public async Task<List<Employee>> GetAllEmployeesAsync()
     {
@@ -89,15 +93,7 @@ public class EmployeeService
         {
             throw new InvalidOperationException("An employee with the same email already exists.");
         }
-        existingEmployee.Name = employee.Name;
-        existingEmployee.Surname = employee.Surname; 
-        existingEmployee.PhoneNumber = employee.PhoneNumber;
-        existingEmployee.HireDate = employee.HireDate;
-        existingEmployee.Salary = employee.Salary;
-        existingEmployee.Status = employee.Status;
-        existingEmployee.Email = employee.Email;
-        existingEmployee.DepartmentId = employee.DepartmentId;
-        existingEmployee.UpdatedDate = DateTime.UtcNow;
+        _mapper.Map(employee, existingEmployee);
         _context.Employees.Update(existingEmployee);
         await _context.SaveChangesAsync();
         return existingEmployee;
