@@ -101,7 +101,7 @@ namespace MyNLayerApp.DataAccess.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("MyNLayerApp.Entity.Entities.EmployeeProject", b =>

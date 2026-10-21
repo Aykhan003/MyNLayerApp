@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyNLayerApp.DataAccess\MyNLayerApp.DataAccess.csproj" />
+    <ProjectReference Include="..\MyNLayerApp.Business\MyNLayerApp.Business.csproj" />
   </ItemGroup>
 
 </Project>

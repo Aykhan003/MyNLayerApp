@@ -14,5 +14,10 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Projects>
         builder.Property(x => x.StartDate).IsRequired();
         builder.Property(x => x.EndDate).IsRequired(false);
         builder.Property(x => x.Budget).IsRequired().HasColumnType("decimal(18,2)");
+
+        builder.HasMany(x => x.EmployeeProjects)
+            .WithOne(ep => ep.Project)
+            .HasForeignKey(ep => ep.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

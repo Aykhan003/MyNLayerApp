@@ -25,5 +25,10 @@ public class EmployeeConfiguration
             .WithMany(d => d.Employees)
             .HasForeignKey(x => x.DepartmentId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(x => x.EmployeeProjects)
+            .WithOne(ep => ep.Employee)
+            .HasForeignKey(ep => ep.EmployeeId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
