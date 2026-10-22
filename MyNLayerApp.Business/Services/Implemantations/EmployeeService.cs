@@ -44,31 +44,31 @@ public class EmployeeService : IEmployeeService
         }
         return _mapper.Map<EmployeeReturnDto>(employee);
     }
-    public async Task<Employee> CreateEmployeeAsync(Employee employee)
+    public async Task<EmployeeCreateDto> CreateEmployeeAsync(EmployeeCreateDto employeeCreateDto)
     {
-        if (employee == null)
+        if (employeeCreateDto == null)
         {
-            throw new ArgumentNullException(nameof(employee), "Employee cannot be null.");
+            throw new ArgumentNullException(nameof(employeeCreateDto), "Employee cannot be null.");
         }
-        var department = await _context.Departments.Include(d => d.Employees).FirstOrDefaultAsync(d => d.Id == employee.DepartmentId);
+        var department = await _context.Departments.Include(d => d.Employees).FirstOrDefaultAsync(d => d.Id == employeeCreateDto.DepartmentId);
         if (department == null)
         {
-            throw new KeyNotFoundException($"Department with ID {employee.DepartmentId} not found.");
+            throw new KeyNotFoundException($"Department with ID {employeeCreateDto.DepartmentId} not found.");
         }
         if (department.Employees.Count >= department.Limit)
         {
             throw new InvalidOperationException($"Cannot add employee. Department '{department.Name}' has reached its limit of {department.Limit} employees.");
         }
         var existingEmployee = await _context.Employees
-            .FirstOrDefaultAsync(e => e.Email == employee.Email);
+            .FirstOrDefaultAsync(e => e.Email == employeeCreateDto.Email);
         if (existingEmployee != null)
         {
             throw new InvalidOperationException("An employee with the same email already exists.");
         }
 
-        _context.Employees.Add(employee);
+        _context.Employees.Add(employeeCreateDto);
         await _context.SaveChangesAsync();
-        return employee;
+        return employeeCreateDto;
     }
     public async Task<Employee> UpdateEmployeeAsync(Employee employee)
     {
