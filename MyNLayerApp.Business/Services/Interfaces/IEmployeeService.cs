@@ -1,13 +1,14 @@
-﻿using MyNLayerApp.Entity.Entities;
+﻿using MyNLayerApp.Business.Dtos.EmployeeDtos;
+using MyNLayerApp.Entity.Entities;
 
 namespace MyNLayerApp.Business.Services.Interfaces
 {
     public interface IEmployeeService
     {
-        Task<Employee> CreateEmployeeAsync(Employee employee);
+        Task<EmployeeCreateDto> CreateEmployeeAsync(Employee employee);
         Task DeleteEmployeeAsync(int id);
-        Task<List<Employee>> GetAllEmployeesAsync();
-        Task<Employee?> GetEmployeeByIdAsync(int id);
-        Task<Employee> UpdateEmployeeAsync(Employee employee);
+        Task<List<EmployeeReturnDto>> GetAllEmployeesAsync();
+        Task<EmployeeReturnDto?> GetEmployeeByIdAsync(int id);
+        Task<EmployeeCreateDto> UpdateEmployeeAsync(Employee employee);
     }
 }

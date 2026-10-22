@@ -3,6 +3,7 @@ using MyNLayerApp.Entity.Entities;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using MyNLayerApp.Business.Services.Interfaces;
+using MyNLayerApp.Business.Dtos.EmployeeDtos;
 
 namespace MyNLayerApp.Business.Services.Implemantations;
 
@@ -15,26 +16,33 @@ public class EmployeeService : IEmployeeService
         _context = context;
         _mapper = mapper;
     }
-    public async Task<List<Employee>> GetAllEmployeesAsync()
+    public async Task<List<EmployeeReturnDto>> GetAllEmployeesAsync()
     {
-        return await _context.Employees.AsNoTracking()
+        return await _context.Employees
+            .AsNoTracking()
             .Include(e => e.Department)
+            .Include(e => e.EmployeeProjects)
+            .ThenInclude(ep => ep.Project)
+            .Select(e => _mapper.Map<EmployeeReturnDto>(e))
             .ToListAsync();
     }
-    public async Task<Employee?> GetEmployeeByIdAsync(int id)
+    public async Task<EmployeeReturnDto?> GetEmployeeByIdAsync(int id)
     {
         if (id <= 0)
         {
             throw new ArgumentException("Invalid employee ID.");
         }
-        var employee = await _context.Employees.AsNoTracking().
-            Include(e => e.Department)
+        var employee = await _context.Employees
+            .AsNoTracking()
+            .Include(e => e.Department)
+            .Include(e => e.EmployeeProjects)
+            .ThenInclude(ep => ep.Project)
             .FirstOrDefaultAsync(e => e.Id == id);
         if (employee == null)
         {
             throw new KeyNotFoundException($"Employee with ID {id} not found.");
         }
-        return employee;
+        return _mapper.Map<EmployeeReturnDto>(employee);
     }
     public async Task<Employee> CreateEmployeeAsync(Employee employee)
     {
